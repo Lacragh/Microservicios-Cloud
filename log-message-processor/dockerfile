@@ -1,0 +1,23 @@
+# Use an official Python runtime as a parent image
+FROM python:3.6-slim
+
+RUN apt-get update && apt-get install -y gcc build-essential
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+# Define environment variables (can be overridden at runtime)
+ENV REDIS_HOST=redis
+ENV REDIS_PORT=6379
+ENV REDIS_CHANNEL=log_channel
+
+# Command to run the application
+CMD ["python3", "main.py"]
+
