@@ -48,7 +48,7 @@ steps:
       azureSubscription: '$(azureSubscription)'
       appType: 'webAppLinux'
       appName: '$(appName)'
-      package: '$(Pipeline.Workspace)/drop/api.zip'
+      package: '$(Build.ArtifactStagingDirectory)/drop/api.zip'
     displayName: 'Deploy API to Azure'
 
 
