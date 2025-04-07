@@ -14,7 +14,7 @@ pool:
 variables:
   azureSubscription: 'PipelineConnection'
   appName: 'TODOs-API'
-  packageDir: './todos_api'  # Adjust if code is in a subfolder
+  packageDir: './todos-api'  # Adjust if code is in a subfolder
 
 steps:
   - task: NodeTool@0
@@ -23,9 +23,7 @@ steps:
     displayName: 'Install Node.js'
 
   - script: |
-      pwd
       cd todos-api
-      pwd
       npm install
     displayName: 'npm install'
   
