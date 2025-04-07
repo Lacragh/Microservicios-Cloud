@@ -9,14 +9,47 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
 
-- script: |
-    cd todos-api
-    npm install
-    JWT_SECRET=PRFT TODO_API_PORT=8082 npm start
-  displayName: 'npm install and run'
+
+variables:
+  azureSubscription: 'PipelineConnection'
+  appName: 'TODOs-API'
+  packageDir: '/todos_api'  # Adjust if code is in a subfolder
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm install
+    displayName: 'npm install'
+  
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(packageDir)'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/api.zip'
+      replaceExistingArchive: true
+    displayName: 'Archive app'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
+    displayName: 'Publish artifacts'
+
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: '$(azureSubscription)'
+      appType: 'webAppLinux'
+      appName: '$(appName)'
+      package: '$(Pipeline.Workspace)/drop/api.zip'
+    displayName: 'Deploy API to Azure'
+
+
+
+
