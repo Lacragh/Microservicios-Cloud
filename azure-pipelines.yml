@@ -23,7 +23,7 @@ steps:
     displayName: 'Install Node.js'
 
   - script: |
-      ls
+      dir
       cd todos-api
       npm install
     displayName: 'npm install'
