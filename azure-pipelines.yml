@@ -14,7 +14,7 @@ pool:
 variables:
   azureSubscription: 'PipelineConnection'
   appName: 'TODOs-API'
-  packageDir: '/todos_api'  # Adjust if code is in a subfolder
+  packageDir: 'todos_api'  # Adjust if code is in a subfolder
 
 steps:
   - task: NodeTool@0
