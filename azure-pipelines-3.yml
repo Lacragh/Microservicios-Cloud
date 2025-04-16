@@ -25,7 +25,7 @@ stages:
               containerRegistry: $(dockerRegistryServiceConnection)
               repository: $(imageName)
               command: buildAndPush
-              Dockerfile: log-message-processor/Dockerfile
+              Dockerfile: Dockerfile
               buildContext: log-message-processor
               tags: |
                 $(Build.BuildId)
