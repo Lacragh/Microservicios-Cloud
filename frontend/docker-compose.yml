@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      - PORT=8085
+      - AUTH_API_ADDRESS=http://localhost:8000
+      - TODOS_API_ADDRESS=http://localhost:8082
+      - USERS_API_ADDRESS=http://localhost:8083
+    networks:
+      - microservice-network
+networks:
+  microservice-network:
+    driver: bridge

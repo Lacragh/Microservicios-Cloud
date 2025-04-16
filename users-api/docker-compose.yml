@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  users-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - JWT_SECRET=PRFT
+      - SERVER_PORT=8083
+    networks:
+      - microservice-network
+
+networks:
+  microservice-network:
+    driver: bridge
