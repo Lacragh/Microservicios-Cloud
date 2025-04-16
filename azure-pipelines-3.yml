@@ -14,7 +14,7 @@ variables:
   azureSubscription: 'PipelineConnection'           # ARM SC name
 
   # Application-specific environment variables
-  REDIS_HOST: 'rredisTODO.redis.cache.windows.net'
+  REDIS_HOST: 'redisTODO.redis.cache.windows.net'
   REDIS_PORT: '6380'
   REDIS_CHANNEL: 'log_channel'
   #ZIPKIN_URL: ''
