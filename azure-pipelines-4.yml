@@ -15,7 +15,7 @@ variables:
 
 stages:
   - stage: BuildAndPush
-    displayName: Build and Push Docker Image
+    displayName: Build and Push Docker Image  
     jobs:
       - job: Docker
         steps:
@@ -26,7 +26,7 @@ stages:
               repository: $(imageName)
               command: buildAndPush
               Dockerfile: auth-api/Dockerfile
-              buildContext: log-message-processor
+              buildContext: auth-api
               tags: |
                 $(Build.BuildId)
 
