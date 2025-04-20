@@ -33,6 +33,10 @@ stages:
               buildContext: todos-api
               tags: |
                 $(Build.BuildId)
+              envVars: |
+                JWT_SECRET=$(JWT_SECRET)
+                AUTH_API_PORT=$(AUTH_API_PORT)
+                USERS_API_ADDRESS=$(USERS_API_ADDRESS)
 
   - stage: Deploy
     displayName: Deploy to Azure Web App
