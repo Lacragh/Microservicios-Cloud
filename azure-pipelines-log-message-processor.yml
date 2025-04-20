@@ -54,4 +54,4 @@ stages:
                 REDIS_HOST=$(REDIS_HOST)
                 REDIS_PORT=$(REDIS_PORT)
                 REDIS_CHANNEL=$(REDIS_CHANNEL)
-                ZIPKIN_URL=$(ZIPKIN_URL)
+              #ZIPKIN_URL=$(ZIPKIN_URL)
