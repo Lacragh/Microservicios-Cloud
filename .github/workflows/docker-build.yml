@@ -25,7 +25,7 @@ jobs:
         VERSION=$(date +%Y%m%d%H%M%S) 
 
         # Build and tag images
-        docker-compose build log_processor todos_api auth_api user_api frontend
+        docker compose build log_processor todos_api auth_api user_api frontend
 
         docker tag log_processor pipebarreto/log-message-processor:latest
         docker tag log_processor pipebarreto/log-message-processor:$VERSION
