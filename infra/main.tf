@@ -42,7 +42,7 @@ resource "azurerm_container_group" "log_processor" {
 
   container {
     name   = "log-processor"
-    image  = "your-dockerhub-user/log-message-processor:latest"
+    image  = "pipebarreto/log-message-processor:latest"
     cpu    = "0.5"
     memory = "1.5"
 
@@ -59,7 +59,7 @@ resource "azurerm_container_group" "todos_api" {
 
   container {
     name   = "todos-api"
-    image  = "your-dockerhub-user/todos-api:latest"
+    image  = "pipebarreto/todos-api:latest"
     cpu    = "0.5"
     memory = "1.5"
 
@@ -76,7 +76,7 @@ resource "azurerm_container_group" "auth_api" {
 
   container {
     name   = "auth-api"
-    image  = "your-dockerhub-user/auth-api:latest"
+    image  = "pipebarreto/auth-api:latest"
     cpu    = "0.5"
     memory = "1.5"
   }
@@ -92,7 +92,7 @@ resource "azurerm_container_group" "user_api" {
 
   container {
     name   = "user-api"
-    image  = "your-dockerhub-user/users-api:latest"
+    image  = "pipebarreto/users-api:latest"
     cpu    = "0.5"
     memory = "1.5"
 
@@ -109,7 +109,7 @@ resource "azurerm_container_group" "frontend" {
 
   container {
     name   = "frontend"
-    image  = "your-dockerhub-user/frontend:latest"
+    image  = "pipebarreto/frontend:latest"
     cpu    = "0.5"
     memory = "1.5"
 

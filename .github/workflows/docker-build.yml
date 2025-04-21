@@ -25,24 +25,24 @@ jobs:
         VERSION=$(date +%Y%m%d%H%M%S)
 
         # Build and tag images
-        docker build -t pipebarreto/log-message-processor:latest -t pipebarreto/log-message-processor:$VERSION ./log-message-processor
-        docker build -t pipebarreto/todos-api:latest -t pipebarreto/todos-api:$VERSION ./todos-api
-        docker build -t pipebarreto/auth-api:latest -t pipebarreto/auth-api:$VERSION ./auth-api
-        docker build -t pipebarreto/users-api:latest -t pipebarreto/users-api:$VERSION ./users-api
-        docker build -t pipebarreto/frontend:latest -t pipebarreto/frontend:$VERSION ./frontend
+        docker build -t log-message-processor:latest -t log-message-processor:$VERSION ./log-message-processor
+        docker build -t todos-api:latest -t todos-api:$VERSION ./todos-api
+        docker build -t auth-api:latest -t auth-api:$VERSION ./auth-api
+        docker build -t users-api:latest -t users-api:$VERSION ./users-api
+        docker build -t frontend:latest -t frontend:$VERSION ./frontend
 
         # Push images to Docker Hub
-        docker push pipebarreto/log-message-processor:latest
-        docker push pipebarreto/log-message-processor:$VERSION
+        docker push log-message-processor:latest
+        docker push log-message-processor:$VERSION
 
-        docker push pipebarreto/todos-api:latest
-        docker push pipebarreto/todos-api:$VERSION
+        docker push todos-api:latest
+        docker push todos-api:$VERSION
 
-        docker push pipebarreto/auth-api:latest
-        docker push pipebarreto/auth-api:$VERSION
+        docker push auth-api:latest
+        docker push auth-api:$VERSION
 
-        docker push pipebarreto/users-api:latest
-        docker push pipebarreto/users-api:$VERSION
+        docker push users-api:latest
+        docker push users-api:$VERSION
 
-        docker push pipebarreto/frontend:latest
-        docker push pipebarreto/frontend:$VERSION
+        docker push frontend:latest
+        docker push frontend:$VERSION
