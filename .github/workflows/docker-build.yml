@@ -1,0 +1,59 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build, tag, and push images
+      run: |
+        # Define a version (e.g., from a GitHub Actions environment variable or hardcoded)
+        VERSION=$(date +%Y%m%d%H%M%S) 
+
+        # Build and tag images
+        docker-compose build log_processor todos_api auth_api user_api frontend
+
+        docker tag log_processor pipebarreto/log-message-processor:latest
+        docker tag log_processor pipebarreto/log-message-processor:$VERSION
+
+        docker tag todos_api pipebarreto/todos-api:latest
+        docker tag todos_api pipebarreto/todos-api:$VERSION
+
+        docker tag auth_api pipebarreto/auth-api:latest
+        docker tag auth_api pipebarreto/auth-api:$VERSION
+
+        docker tag user_api pipebarreto/users-api:latest
+        docker tag user_api pipebarreto/users-api:$VERSION
+
+        docker tag frontend pipebarreto/frontend:latest
+        docker tag frontend pipebarreto/frontend:$VERSION
+
+        # Push images to Docker Hub
+        docker push pipebarreto/log-message-processor:latest
+        docker push pipebarreto/log-message-processor:$VERSION
+
+        docker push pipebarreto/todos-api:latest
+        docker push pipebarreto/todos-api:$VERSION
+
+        docker push pipebarreto/auth-api:latest
+        docker push pipebarreto/auth-api:$VERSION
+
+        docker push pipebarreto/users-api:latest
+        docker push pipebarreto/users-api:$VERSION
+
+        docker push pipebarreto/frontend:latest
+        docker push pipebarreto/frontend:$VERSION
