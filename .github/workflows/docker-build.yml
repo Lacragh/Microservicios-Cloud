@@ -22,25 +22,14 @@ jobs:
     - name: Build, tag, and push images
       run: |
         # Define a version (e.g., from a GitHub Actions environment variable or hardcoded)
-        VERSION=$(date +%Y%m%d%H%M%S) 
+        VERSION=$(date +%Y%m%d%H%M%S)
 
         # Build and tag images
-        docker compose build log_processor todos_api auth_api user_api frontend
-
-        docker tag log_processor pipebarreto/log-message-processor:latest
-        docker tag log_processor pipebarreto/log-message-processor:$VERSION
-
-        docker tag todos_api pipebarreto/todos-api:latest
-        docker tag todos_api pipebarreto/todos-api:$VERSION
-
-        docker tag auth_api pipebarreto/auth-api:latest
-        docker tag auth_api pipebarreto/auth-api:$VERSION
-
-        docker tag user_api pipebarreto/users-api:latest
-        docker tag user_api pipebarreto/users-api:$VERSION
-
-        docker tag frontend pipebarreto/frontend:latest
-        docker tag frontend pipebarreto/frontend:$VERSION
+        docker build -t pipebarreto/log-message-processor:latest -t pipebarreto/log-message-processor:$VERSION ./log-message-processor
+        docker build -t pipebarreto/todos-api:latest -t pipebarreto/todos-api:$VERSION ./todos-api
+        docker build -t pipebarreto/auth-api:latest -t pipebarreto/auth-api:$VERSION ./auth-api
+        docker build -t pipebarreto/users-api:latest -t pipebarreto/users-api:$VERSION ./users-api
+        docker build -t pipebarreto/frontend:latest -t pipebarreto/frontend:$VERSION ./frontend
 
         # Push images to Docker Hub
         docker push pipebarreto/log-message-processor:latest
