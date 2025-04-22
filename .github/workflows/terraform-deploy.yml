@@ -24,12 +24,15 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        working-directory: ./infra
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: ./infra
 
       - name: Terraform plan
         run: terraform plan -auto-approve
+        working-directory: ./infra
         env:
           TF_VAR_username: ${{ secrets.TF_VAR_USERNAME }}
           TF_VAR_password: ${{ secrets.TF_VAR_PASSWORD }}
