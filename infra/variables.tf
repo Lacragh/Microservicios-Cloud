@@ -8,12 +8,14 @@ variable "prefix_name" {
   description = "prefijo para nombres de recursos"
 }
 
-variable "user" {
+variable "username" {
   type        = string
-  description = "usuario ssh"
+  description = "The username for the local account that will be created on the new VM."
+  default     = "azureadmin"
 }
 
 variable "password" {
+  description = "The password for the virtual machine"
   type        = string
-  description = "password ssh"
+  sensitive   = true
 }

@@ -15,3 +15,9 @@ In each folder you can find a more in-depth explanation of each component:
 
 Take a look at the components diagram that describes them and their interactions.
 ![microservice-app-example](/arch-img/Microservices.png)
+
+
+
+
+
+az ad sp create-for-rbac --name "github-terraform" --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>" --sdk-auth

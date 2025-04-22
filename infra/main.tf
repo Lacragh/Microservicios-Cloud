@@ -3,117 +3,127 @@ resource "azurerm_resource_group" "rg" {
   location = var.region
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.prefix_name}-vnet"
+resource "azurerm_virtual_network" "taller_network" {
+  name                = "myVnet"
+  address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  address_space       = ["10.0.0.0/16"]
 }
 
-resource "azurerm_subnet" "subnet" {
-  name                 = "${var.prefix_name}-subnet"
+# Create subnet
+resource "azurerm_subnet" "taller_subnet" {
+  name                 = "mySubnet"
   resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = azurerm_virtual_network.taller_network.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_container_group" "redis" {
-  name                = "${var.prefix_name}-redis-container"
+# Create public IPs
+resource "azurerm_public_ip" "taller_public_ip" {
+  name                = "myPublicIP"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-
-  container {
-    name   = "redis"
-    image  = "redis:7.0"
-    cpu    = "0.5"
-    memory = "1.5"
-
-  }
-
-  subnet_ids = [azurerm_subnet.subnet.id]
+  allocation_method   = "Static"
+  sku                 = "Standard"
 }
 
-resource "azurerm_container_group" "log_processor" {
-  name                = "${var.prefix_name}-log-processor-container"
+# Create Network Security Group and rule
+resource "azurerm_network_security_group" "taller_nsg" {
+  name                = "myNetworkSecurityGroup"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
 
-  container {
-    name   = "log-processor"
-    image  = "pipebarreto/log-message-processor:latest"
-    cpu    = "0.5"
-    memory = "1.5"
-
+  security_rule {
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
 
-  subnet_ids = [azurerm_subnet.subnet.id]
+  security_rule {
+    name                       = "frontend"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8080"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
-resource "azurerm_container_group" "todos_api" {
-  name                = "${var.prefix_name}-todos-api-container"
+# Create network interface
+resource "azurerm_network_interface" "taller_nic" {
+  name                = "myNIC"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
 
-  container {
-    name   = "todos-api"
-    image  = "pipebarreto/todos-api:latest"
-    cpu    = "0.5"
-    memory = "1.5"
-
+  ip_configuration {
+    name                          = "my_nic_configuration"
+    subnet_id                     = azurerm_subnet.taller_subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.taller_public_ip.id
   }
-
-  subnet_ids = [azurerm_subnet.subnet.id]
 }
 
-resource "azurerm_container_group" "auth_api" {
-  name                = "${var.prefix_name}-auth-api-container"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-
-  container {
-    name   = "auth-api"
-    image  = "pipebarreto/auth-api:latest"
-    cpu    = "0.5"
-    memory = "1.5"
-  }
-
-  subnet_ids = [azurerm_subnet.subnet.id]
+# Connect the security group to the network interface
+resource "azurerm_network_interface_security_group_association" "example" {
+  network_interface_id      = azurerm_network_interface.taller_nic.id
+  network_security_group_id = azurerm_network_security_group.taller_nsg.id
 }
 
-resource "azurerm_container_group" "user_api" {
-  name                = "${var.prefix_name}-user-api-container"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
-
-  container {
-    name   = "user-api"
-    image  = "pipebarreto/users-api:latest"
-    cpu    = "0.5"
-    memory = "1.5"
-
+# Generate random text for a unique storage account name
+resource "random_id" "random_id" {
+  keepers = {
+    # Generate a new ID only when a new resource group is defined
+    resource_group = azurerm_resource_group.rg.name
   }
 
-  subnet_ids = [azurerm_subnet.subnet.id]
+  byte_length = 8
 }
 
-resource "azurerm_container_group" "frontend" {
-  name                = "${var.prefix_name}-frontend-container"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  os_type             = "Linux"
+# Create storage account for boot diagnostics
+resource "azurerm_storage_account" "my_storage_account" {
+  name                     = "diag${random_id.random_id.hex}"
+  location                 = azurerm_resource_group.rg.location
+  resource_group_name      = azurerm_resource_group.rg.name
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
 
-  container {
-    name   = "frontend"
-    image  = "pipebarreto/frontend:latest"
-    cpu    = "0.5"
-    memory = "1.5"
+# Create virtual machine
+resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
+  name                  = "App-vm"
+  location              = azurerm_resource_group.rg.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  network_interface_ids = [azurerm_network_interface.taller_nic.id]
+  size                  = "Standard_DS1_v2"
 
+  os_disk {
+    name                 = "myOsDisk"
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
   }
 
-  subnet_ids = [azurerm_subnet.subnet.id]
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
+
+  computer_name  = "hostname"
+  admin_username = var.username
+  disable_password_authentication = false
+  admin_password = var.password
+
+  boot_diagnostics {
+    storage_account_uri = azurerm_storage_account.my_storage_account.primary_blob_endpoint
+  }
 }

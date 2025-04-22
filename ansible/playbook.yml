@@ -1,0 +1,103 @@
+---
+- name: Install Docker and Run Docker Compose
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Update and install required packages
+      apt:
+        name: 
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+    
+    - name: Set Docker Compose download URL
+      set_fact:
+        docker_compose_url: "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture }}"
+
+    - name: Install Docker Compose
+      get_url:
+        url: "{{ docker_compose_url }}"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Copy docker-compose.yml to the target machine
+      copy:
+        src: ../docker-compose.yml
+        dest: /home/{{ ansible_user }}/docker-compose.yml
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+
+    - name: Copy todos-api directory to the target machine
+      copy:
+        src: ../todos-api
+        dest: /home/{{ ansible_user }}/
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy auth-api directory to the target machine
+      copy:
+        src: ../auth-api
+        dest: /home/{{ ansible_user }}/
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy users-api directory to the target machine
+      copy:
+        src: ../users-api
+        dest: /home/{{ ansible_user }}/
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy frontend directory to the target machine
+      copy:
+        src: ../frontend
+        dest: /home/{{ ansible_user }}/
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Copy log-message-processor directory to the target machine
+      copy:
+        src: ../log-message-processor
+        dest: /home/{{ ansible_user }}/
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+
+    - name: Run Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /home/{{ ansible_user }}
