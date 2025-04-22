@@ -3,6 +3,21 @@ resource "azurerm_resource_group" "rg" {
   location = var.region
 }
 
+
+resource "azurerm_storage_account" "storage_ac" {
+  name                     = "tfstatestorage${random_id.random_id.hex}"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "example" {
+  name                  = "terraform-state"
+  storage_account_id = azurerm_storage_account.storage_ac.id
+  container_access_type = "private"
+}
+
 resource "azurerm_virtual_network" "taller_network" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
@@ -80,12 +95,13 @@ resource "azurerm_network_interface_security_group_association" "example" {
 
 # Generate random text for a unique storage account name
 resource "random_id" "random_id" {
+    
   keepers = {
     # Generate a new ID only when a new resource group is defined
     resource_group = azurerm_resource_group.rg.name
   }
 
-  byte_length = 8
+  byte_length = 4
 }
 
 # Create storage account for boot diagnostics
