@@ -26,10 +26,6 @@ jobs:
         run: terraform init
         working-directory: ./infra
 
-      - name: Terraform Plan
-        run: terraform plan
-        working-directory: ./infra
-
       - name: Terraform plan
         run: terraform plan -auto-approve
         working-directory: ./infra
