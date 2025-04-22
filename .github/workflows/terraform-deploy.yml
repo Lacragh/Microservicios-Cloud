@@ -27,7 +27,7 @@ jobs:
         working-directory: ./infra
 
       - name: Terraform plan
-        run: terraform plan -auto-approve
+        run: terraform plan 
         working-directory: ./infra
         env:
           TF_VAR_username: ${{ secrets.TF_VAR_USERNAME }}
