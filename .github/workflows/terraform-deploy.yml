@@ -49,17 +49,26 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     
-      - name: Get Terraform Output
-        id: tfoutput
-        working-directory: ./infra
+      - name: Get app VM IP and create Ansible hosts.ini
+        id: get-ip
         run: |
-         terraform output -json public_ips > public_ips.json
+          RESOURCE_GROUP="taller-rg"
+          VM_NAME="App-vm"
 
-      - name: Create Ansible Inventory File
+          IP=$(az vm list-ip-addresses --name "$VM_NAME" --resource-group "$RESOURCE_GROUP" --query "[0].virtualMachine.network.publicIpAddresses[0].ipAddress" -o tsv)
+
+          echo "App VM IP: $IP"
+          echo "ip=$IP" >> $GITHUB_OUTPUT
+
+          # Move into the Ansible folder
+          cd ansible
+
+          # Create the hosts.ini file in the ansible folder
+          cat <<EOF > hosts.ini
+          [all]
+          $IP ansible_user=${{ secrets.TF_VAR_USERNAME }} ansible_password=${{ secrets.TF_VAR_PASSWORD }}
+
+      - name: Run Ansible Playbook from ansible folder
+        working-directory: ./ansible
         run: |
-         echo "[vms]" > inventory.ini
-         jq -r '.[]' public_ips.json | while read ip; do
-          echo "$ip ansible_user=${{ secrets.TF_VAR_USERNAME }} ansible_password=${{ secrets.TF_VAR_PASSWORD }}" >> inventory.ini
-         done
-
-      
+          ansible-playbook -i hosts.ini your-playbook.yml
