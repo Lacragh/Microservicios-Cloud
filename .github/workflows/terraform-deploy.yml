@@ -71,4 +71,4 @@ jobs:
       - name: Run Ansible Playbook from ansible folder
         working-directory: ./ansible
         run: |
-          ansible-playbook -i hosts.ini your-playbook.yml
+          ansible-playbook -i hosts.ini playbook.yml
