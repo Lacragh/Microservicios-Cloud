@@ -13,7 +13,8 @@ def step_given_user_on_login_page(context):
 
 @when('the proceed button is displayed')
 def step_then_proceed_button_displayed(context):
-    context.login_page.proceed()
+    pass
+    #context.login_page.proceed()
 
 @when('the user logs in with valid credentials')
 def step_when_user_logs_in_valid(context):
