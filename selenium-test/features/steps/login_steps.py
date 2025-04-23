@@ -7,7 +7,7 @@ from pages.todos_page import TodosPage
 @given('the user is on the login page')
 def step_given_user_on_login_page(context):
     app_ip = os.getenv("APP_IP", "127.0.0.1")
-    context.driver.get("http://{app_ip}:8080/#/login")
+    context.driver.get(f"http://{app_ip}:8080/#/login")
     context.login_page = LoginPage(context.driver)
     
 
