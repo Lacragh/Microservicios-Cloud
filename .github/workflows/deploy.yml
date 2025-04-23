@@ -1,4 +1,4 @@
-name: Terraform Deploy to Azure
+name: Deployment to Azure
 
 on:
   push:
@@ -26,17 +26,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
         working-directory: ./infra
-
-      - name: Terraform plan
-        run: terraform plan 
-        working-directory: ./infra
-        env:
-          TF_VAR_username: ${{ secrets.TF_VAR_USERNAME }}
-          TF_VAR_password: ${{ secrets.TF_VAR_PASSWORD }}
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
       
       - name: Terraform Apply
         run: terraform apply -auto-approve
@@ -73,3 +62,12 @@ jobs:
         run: |
           cat hosts.ini
           ansible-playbook -i hosts.ini playbook.yml
+      
+      # Build the Docker image
+      - name: Build Docker image
+        run: |
+         docker build -t selenium-test ./selenium-test
+
+      - name: Run Selenium Tests in Docker
+        run: |
+          docker run --rm -e APP_IP=${{ steps.get-ip.outputs.ip }} selenium-test

@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'log-message-processor/**'
+      - 'todos-api/**'
+      - 'auth-api/**'
+      - 'users-api/**'
+      - 'frontend/**'
 
 jobs:
   build-and-push:
