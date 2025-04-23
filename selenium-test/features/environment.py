@@ -1,4 +1,5 @@
 import time
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -7,6 +8,7 @@ def before_scenario(context, scenario):
     Esta función se ejecuta antes de cada escenario de prueba.
     Inicializa el WebDriver y lo almacena en el contexto.
     """
+    app_ip = os.getenv("APP_IP", "127.0.0.1")
     options = Options()
     options.add_argument("--headless")  # Ejecutar en modo sin cabeza (sin interfaz gráfica)
     options.add_argument("--incognito")
@@ -14,7 +16,7 @@ def before_scenario(context, scenario):
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-notifications")
     options.add_argument("--ignore-certificate-errors")  # Ignore certificate errors
-    options.add_argument("--unsafely-treat-insecure-origin-as-secure=http://74.235.28.142")  # Treat HTTP as secure
+    options.add_argument(f"--unsafely-treat-insecure-origin-as-secure=http://{app_ip}")  # Treat HTTP as secure
     options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
     options.add_experimental_option("prefs", {
         "credentials_enable_service": False,
