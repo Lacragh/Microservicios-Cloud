@@ -24,7 +24,23 @@ var (
 )
 
 func main() {
-	hostport := ":" + os.Getenv("AUTH_API_PORT")
+	// Use this approach to explicitly bind to all interfaces
+	host := os.Getenv("HOST")
+	port := os.Getenv("PORT")
+	
+	// Default values if environment variables aren't set
+	if host == "" {
+		host = "0.0.0.0"
+	}
+	if port == "" {
+		port = os.Getenv("AUTH_API_PORT")
+		if port == "" {
+			port = "8000"
+		}
+	}
+	
+	hostport := host + ":" + port
+
 	userAPIAddress := os.Getenv("USERS_API_ADDRESS")
 
 	envJwtSecret := os.Getenv("JWT_SECRET")

@@ -2,8 +2,9 @@
 const express = require('express')
 const bodyParser = require("body-parser")
 const jwt = require('express-jwt')
+const cors = require('cors'); // <-- Esta línea FALTABA
 
-const ZIPKIN_URL = process.env.ZIPKIN_URL || 'http://127.0.0.1:9411/api/v2/spans';
+const ZIPKIN_URL = 'https://zipkin-111693207847.us-central1.run.app/api/v2/spans';
 const {Tracer, 
   BatchRecorder,
   jsonEncoder: {JSON_V2}} = require('zipkin');
@@ -45,6 +46,23 @@ const recorder = new  BatchRecorder({
 const localServiceName = 'todos-api';
 const tracer = new Tracer({ctxImpl, recorder, localServiceName});
 
+const corsOptions = {
+  origin: 'https://frontend-111693207847.us-central1.run.app', // o tu dominio real
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'x-b3-traceid',
+    'x-b3-spanid',
+    'x-b3-parentspanid',
+    'x-b3-sampled',
+    'x-b3-flags',
+    'x-request-id'
+  ]
+};
+
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(jwt({ secret: jwtSecret }))
 app.use(zipkinMiddleware({tracer}));
