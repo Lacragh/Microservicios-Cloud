@@ -2,7 +2,7 @@ name: Deploy to Cloud Run
 
 on:
   workflow_run:
-    workflows: ["Build Docker Images"]
+    workflows: ["CI/CD Pipeline - Development"]
     types:
       - completed
 
