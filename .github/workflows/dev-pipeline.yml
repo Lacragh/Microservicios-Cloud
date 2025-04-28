@@ -1,4 +1,4 @@
-name: Build Docker Images
+name: CI/CD Pipeline - Development
 
 on:
   push:
@@ -10,44 +10,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      - name: DockerHub Login
-        uses: docker/login-action@v2
-        with:
-          username: lacragh
-          password: victor9043
+    - name: Set up DockerHub Login
+      uses: docker/login-action@v2
+      with:
+        username: lacragh
+        password: victor9043
 
-      - name: Generate build tag
-        id: generate_tag
-        run: |
-          echo "BUILD_TAG=$(date +%s)" >> $GITHUB_ENV
+    - name: Build auth-api
+      run: |
+        docker build -t lacragh/auth-api ./auth-api
+    - name: Build users-api
+      run: |
+        docker build -t lacragh/users-api ./users-api
+    - name: Build todos-api
+      run: |
+        docker build -t lacragh/todos-api ./todos-api
+    - name: Build frontend
+      run: |
+        docker build -t lacragh/frontend ./frontend
+    
 
-      - name: Save build tag to file
-        run: |
-          echo "${{ env.BUILD_TAG }}" > build_tag.txt
-
-      - name: Build Docker images
-        run: |
-          docker build -t lacragh/auth-api:${{ env.BUILD_TAG }} ./auth-api
-          docker build -t lacragh/users-api:${{ env.BUILD_TAG }} ./users-api
-          docker build -t lacragh/todos-api:${{ env.BUILD_TAG }} ./todos-api
-          docker build -t lacragh/frontend:${{ env.BUILD_TAG }} ./frontend
-
-      - name: Push Docker images
-        run: |
-          docker push lacragh/auth-api:${{ env.BUILD_TAG }}
-          docker push lacragh/users-api:${{ env.BUILD_TAG }}
-          docker push lacragh/todos-api:${{ env.BUILD_TAG }}
-          docker push lacragh/frontend:${{ env.BUILD_TAG }}
-
-      - name: Upload build tag
-        uses: actions/upload-artifact@v4
-        with:
-          name: build_tag
-          path: build_tag.txt
+    - name: Push Docker images
+      run: |
+        docker push lacragh/auth-api
+        docker push lacragh/users-api
+        docker push lacragh/todos-api
+        docker push lacragh/frontend
 
