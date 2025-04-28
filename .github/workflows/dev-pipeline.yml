@@ -41,7 +41,7 @@ jobs:
           docker push lacragh/frontend:${{ env.BUILD_TAG }}
 
       - name: Upload build tag
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build_tag
           path: build_tag.txt
