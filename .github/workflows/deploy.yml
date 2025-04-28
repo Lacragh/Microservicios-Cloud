@@ -33,41 +33,42 @@ jobs:
         id: revision
         run: echo "REV_SUFFIX=rev-$(date +%s)" >> $GITHUB_ENV
 
+      - name: Generate build tag
+        id: vars
+        run: echo "BUILD_TAG=$(date +%s)" >> $GITHUB_ENV
+
       - name: Deploy frontend
         run: |
           gcloud run deploy frontend \
-            --image=docker.io/lacragh/frontend:latest \
-             --revision-suffix="$REV_SUFFIX" \
+            --image=docker.io/lacragh/frontend:${{ env.BUILD_TAG }} \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
             --set-env-vars=AUTH_API_ADDRESS=https://auth-api-111693207847.us-central1.run.app,TODOS_API_ADDRESS=https://todos-api-111693207847.us-central1.run.app
-            
+
       - name: Deploy auth-api
         run: |
           gcloud run deploy auth-api \
-            --image=docker.io/lacragh/auth-api:latest \
+            --image=docker.io/lacragh/auth-api:${{ env.BUILD_TAG }} \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
             --set-env-vars=AUTH_API_PORT=8000,USERS_API_ADDRESS=https://users-api-111693207847.us-central1.run.app,JWT_SECRET=PRFT
+
       - name: Deploy users-api
         run: |
           gcloud run deploy users-api \
-            --image=docker.io/lacragh/users-api:latest \
+            --image=docker.io/lacragh/users-api:${{ env.BUILD_TAG }} \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
             --set-env-vars=SERVER_PORT=8083,JWT_SECRET=PRFT
-        
+
       - name: Deploy todos-api
         run: |
           gcloud run deploy todos-api \
-            --image=docker.io/lacragh/todos-api \
+            --image=docker.io/lacragh/todos-api:${{ env.BUILD_TAG }} \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
-            --set-env-vars=TODO_API_PORT=8082,JWT_SECRET=PRFT,REDIS_HOST=https://redis-111693207847.us-central1.run.app,REDIS_PORT=6379,REDIS_CHANNEL=log_channel
-
-
-      
+            --set-env-vars=TODO_API_PORT=8082,JWT_SECRET=PRFT,REDIS_HOST=redis,REDIS_PORT=6379,REDIS_CHANNEL=log_channel
