@@ -37,7 +37,7 @@ jobs:
       - name: Deploy frontend
         run: |
           gcloud run deploy frontend \
-            --image=docker.io/lacragh/frontend:latest \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/frontend:latest \
              --revision-suffix="$REV_SUFFIX" \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
@@ -64,7 +64,7 @@ jobs:
       - name: Deploy todos-api
         run: |
           gcloud run deploy todos-api \
-            --image=docker.io/lacragh/todos-api \
+            --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/todos-api \
             --platform=managed \
             --region=${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
