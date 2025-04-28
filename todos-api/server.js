@@ -36,7 +36,7 @@ const jwtSecret = process.env.JWT_SECRET || "foo";
 
 const app = express();
 
-// -------- CONFIGURAR CORS CORRECTAMENTE PRIMERO --------
+// -------- CONFIGURAR CORS PRIMERO --------
 const corsOptions = {
   origin: 'https://frontend-111693207847.us-central1.run.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -52,7 +52,7 @@ const corsOptions = {
   ]
 };
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // Habilitar CORS para todas las rutas OPTIONS
 
 // -------- DEMÁS MIDDLEWARES --------
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -69,8 +69,14 @@ const recorder = new BatchRecorder({
 const tracer = new Tracer({ctxImpl, recorder, localServiceName: 'todos-api'});
 app.use(zipkinMiddleware({tracer}));
 
-// JWT
-app.use(jwt({ secret: jwtSecret }));
+// 🔵 SOLO después de CORS aplicamos JWT, pero ignoramos OPTIONS
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    jwt({ secret: jwtSecret })(req, res, next);
+  }
+});
 
 // Manejar errores de JWT
 app.use(function (err, req, res, next) {
