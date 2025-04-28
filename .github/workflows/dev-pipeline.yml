@@ -24,9 +24,9 @@ jobs:
 
       - name: Generate build tag
         id: vars
-        run: echo "BUILD_TAG=$(date +%s)" >> $GITHUB_ENV
-             echo "${{ env.BUILD_TAG }}" > build_tag.txt   
-
+        run: |
+          echo "BUILD_TAG=$(date +%s)" >> $GITHUB_ENV
+          echo "${{ env.BUILD_TAG }}" > build_tag.txt
 
       - name: Build Docker images
         run: |
