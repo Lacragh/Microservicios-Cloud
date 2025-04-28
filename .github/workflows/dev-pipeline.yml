@@ -3,7 +3,8 @@ name: Build Docker Images
 on:
   push:
     branches:
-      - master
+      - Develop
+      - feature/**
 
 jobs:
   build:
@@ -39,3 +40,9 @@ jobs:
           docker push lacragh/users-api:${{ env.BUILD_TAG }}
           docker push lacragh/todos-api:${{ env.BUILD_TAG }}
           docker push lacragh/frontend:${{ env.BUILD_TAG }}
+
+      - name: Upload build tag
+        uses: actions/upload-artifact@v3
+        with:
+          name: build_tag
+          path: build_tag.txt
