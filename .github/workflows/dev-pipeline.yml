@@ -23,9 +23,12 @@ jobs:
           password: victor9043
 
       - name: Generate build tag
-        id: vars
+        id: generate_tag
         run: |
           echo "BUILD_TAG=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Save build tag to file
+        run: |
           echo "${{ env.BUILD_TAG }}" > build_tag.txt
 
       - name: Build Docker images
@@ -47,3 +50,4 @@ jobs:
         with:
           name: build_tag
           path: build_tag.txt
+
